@@ -3,7 +3,16 @@ import { ElectronAPI } from '@electron-toolkit/preload'
 
 declare global {
   interface Window {
-    electron: ElectronAPI
+    electron: {
+      ipcRenderer: {
+        on: (channel: 'update-message' | 'update-data', func: (...args: unknown[]) => void) => void
+        send: (channel: 'confirm-download' | 'confirm-install' | 'update-data', data?: unknown) => void
+        removeListener: (channel: 'update-message' | 'update-data', func: (...args: unknown[]) => void) => void
+      }
+      process: {
+        versions: NodeJS.ProcessVersions
+      }
+    }
     api: unknown
     electronAPI: {
       onLoadingStateChange: (callback: (loading: boolean) => void) => () => void
@@ -14,6 +23,14 @@ declare global {
       email: string
       password: string
     }>
+  }
+}
+
+interface ElectronAPI {
+  ipcRenderer: {
+    on: <T>(channel: string, listener: (event: Electron.IpcRendererEvent, args: T) => void) => void
+    off: <T>(channel: string, listener: (event: Electron.IpcRendererEvent, args: T) => void) => void
+    send: <T>(channel: string, args?: T) => void
   }
 }
 

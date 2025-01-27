@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, is } from '@electron-toolkit/utils'
 import { config } from 'dotenv'
@@ -18,6 +18,8 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 let mainWindow: BrowserWindow | null = null
+let updateHandler: UpdateHandler
+
 function createWindow(): void {
   // Create the browser window.
   const preload = join(__dirname, '../preload/index.js')
@@ -54,12 +56,10 @@ function createWindow(): void {
   }
 
   // Initialize update handler after window creation
-  const updateHandler = new UpdateHandler(mainWindow)
+  updateHandler = new UpdateHandler(mainWindow)
   
   // Check for updates immediately
-  if (!is.dev) {
-    updateHandler.checkForUpdates()
-  }
+  updateHandler.checkForUpdates()
 }
 
 // This method will be called when Electron has finished
@@ -74,6 +74,15 @@ app.whenReady().then(() => {
 
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
+  })
+
+  // Add these IPC listeners
+  ipcMain.on('confirm-download', () => {
+    updateHandler.startDownload()
+  })
+
+  ipcMain.on('confirm-install', () => {
+    updateHandler.installUpdate()
   })
 })
 

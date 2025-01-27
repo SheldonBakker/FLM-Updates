@@ -3,8 +3,9 @@ declare global {
   interface Window {
     electron: {
       ipcRenderer: {
-        on: (channel: 'update-message', func: (message: string) => void) => void
-        removeListener: (channel: 'update-message', func: (message: string) => void) => void
+        on: <T>(channel: 'update-message' | 'update-data', listener: (event: Electron.IpcRendererEvent, args: T) => void) => void
+        send: <T>(channel: 'confirm-download' | 'confirm-install' | 'update-data', args?: T) => void
+        removeListener: <T>(channel: 'update-message' | 'update-data', listener: (event: Electron.IpcRendererEvent, args: T) => void) => void
       }
       process: {
         versions: NodeJS.ProcessVersions

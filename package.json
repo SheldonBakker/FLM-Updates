@@ -66,14 +66,7 @@
       ],
       "language": "1033",
       "runAfterFinish": true
-    },
-    "publish": [{
-      "provider": "github",
-      "owner": "SheldonBakker",
-      "repo": "FLM-Updates",
-      "private": true,
-      "token": "${process.env.GH_TOKEN}"
-    }]
+    }
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",

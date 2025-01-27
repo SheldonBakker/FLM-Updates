@@ -43,7 +43,6 @@ export default function ClientForm({ client, onClose, onSuccess }: ClientFormPro
   const [error, setError] = useState<string | null>(null)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const addressInputRef = useRef<HTMLInputElement>(null)
-  const [isScriptLoaded, setIsScriptLoaded] = useState(false)
   
   useEffect(() => {
     // Initialize form data based on whether we're editing or creating
@@ -61,7 +60,7 @@ export default function ClientForm({ client, onClose, onSuccess }: ClientFormPro
   }, [client])
 
   useEffect(() => {
-    if (isScriptLoaded || window.google?.maps?.places) {
+    if (window.google?.maps?.places) {
       initAutocomplete()
       return
     }
@@ -69,23 +68,19 @@ export default function ClientForm({ client, onClose, onSuccess }: ClientFormPro
     const script = document.createElement('script')
     script.src = `https://maps.googleapis.com/maps/api/js?key=${
       import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-    }&libraries=places&loading=async&callback=initAutocomplete`
+    }&libraries=places&callback=initAutocomplete`
     script.async = true
     script.defer = true
     script.onerror = (): void => console.error('Google Maps script failed to load')
-
-    const handleLoad = (): void => setIsScriptLoaded(true)
-    script.addEventListener('load', handleLoad)
 
     window.initAutocomplete = initAutocomplete
     document.head.appendChild(script)
 
     return (): void => {
       document.head.removeChild(script)
-      script.removeEventListener('load', handleLoad)
       delete window.initAutocomplete
     }
-  }, [isScriptLoaded])
+  }, [])
 
   const initAutocomplete = (): void => {
     if (!addressInputRef.current || !window.google) return

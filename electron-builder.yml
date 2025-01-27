@@ -52,3 +52,12 @@ extraResources:
   - from: "build"
     to: "build"
     filter: ["**/*"]
+publish:
+  - provider: github
+    owner: SheldonBakker
+    repo: FLM-Updates
+    private: true
+    token: ${env.GH_TOKEN}
+    releaseType: release
+    vPrefixedTagName: true
+    publishAutoUpdate: true

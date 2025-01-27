@@ -7,15 +7,8 @@ export class UpdateHandler {
   constructor(private mainWindow: BrowserWindow) {
     log.transports.file.level = 'debug'
     autoUpdater.logger = log
-    autoUpdater.autoDownload = true
-    autoUpdater.autoInstallOnAppQuit = true
-    
-    autoUpdater.setFeedURL({
-      provider: 'github',
-      owner: 'SheldonBakker',
-      repo: 'FLM-',
-      token: process.env.GH_TOKEN
-    })
+    autoUpdater.autoDownload = false
+    autoUpdater.autoInstallOnAppQuit = false
 
     this.initializeAutoUpdater()
     this.checkForUpdates()
@@ -29,29 +22,27 @@ export class UpdateHandler {
 
     autoUpdater.on('update-available', (info) => {
       log.info('Update available:', info)
-      this.sendStatusToWindow('Update available. Downloading...')
+      this.sendUpdateDataToWindow('update-available', info)
     })
 
     autoUpdater.on('update-not-available', (info) => {
       log.info('Update not available:', info)
       this.sendStatusToWindow('Application is up to date.')
+      this.sendUpdateDataToWindow('update-not-available')
+      this.mainWindow?.webContents.send('update-available')
     })
 
     autoUpdater.on('error', (err) => {
-      log.error('Error in auto-updater:', err)
-      this.sendStatusToWindow(`Error in auto-updater: ${err.message}`)
+      this.handleUpdateError(err)
     })
 
     autoUpdater.on('download-progress', (progressObj) => {
-      log.info('Download progress:', progressObj)
-      this.sendStatusToWindow(
-        `Download speed: ${progressObj.bytesPerSecond} - Downloaded ${progressObj.percent}%`
-      )
+      this.sendUpdateDataToWindow('download-progress', progressObj)
     })
 
     autoUpdater.on('update-downloaded', (info) => {
       log.info('Update downloaded:', info)
-      this.sendStatusToWindow('Update downloaded. Will install on restart.')
+      this.sendUpdateDataToWindow('update-downloaded', info)
     })
   }
 
@@ -59,7 +50,44 @@ export class UpdateHandler {
     this.mainWindow.webContents.send('update-message', text)
   }
 
+  private sendUpdateDataToWindow(type: string, data?: unknown): void {
+    this.mainWindow.webContents.send('update-data', { type, data })
+  }
+
+  private updateCheckTimeout = 15000 // 15 seconds
+  private retryCount = 0
+  private maxRetries = 2
+
   public checkForUpdates(): void {
-    autoUpdater.checkForUpdates()
+    const timeout = setTimeout(() => {
+      this.handleUpdateError(new Error('Update check timed out'))
+    }, this.updateCheckTimeout)
+
+    autoUpdater.checkForUpdates().then(() => {
+      clearTimeout(timeout)
+    }).catch(err => {
+      clearTimeout(timeout)
+      this.handleUpdateError(err)
+    })
+  }
+
+  private handleUpdateError(err: Error): void {
+    if (this.retryCount < this.maxRetries) {
+      this.retryCount++
+      log.info(`Retrying update check (attempt ${this.retryCount})`)
+      setTimeout(() => this.checkForUpdates(), 3000)
+    } else {
+      this.sendStatusToWindow(`Update failed: ${err.message}`)
+      log.error('Final update check failure:', err)
+      this.retryCount = 0 // Reset for next check
+    }
+  }
+
+  public startDownload(): void {
+    autoUpdater.downloadUpdate()
+  }
+
+  public installUpdate(): void {
+    autoUpdater.quitAndInstall()
   }
 } 

@@ -32,7 +32,7 @@ function Navbar(): JSX.Element {
               />
               <div className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">
                 Gunlicence
-                <span className="text-sm font-normal text-stone-400 ml-2">v0.6.0</span>
+                <span className="text-sm font-normal text-stone-400 ml-2">v0.10.0</span>
               </div>
             </div>
 

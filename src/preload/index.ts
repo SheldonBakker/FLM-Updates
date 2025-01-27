@@ -3,11 +3,18 @@ import { contextBridge, ipcRenderer } from 'electron'
 
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
-    on: (channel: 'update-message', func: (message: string) => void): void => {
-      ipcRenderer.on(channel, (_event, message) => func(message))
+    on: (channel: 'update-message' | 'update-data', func: (...args: unknown[]) => void): void => {
+      ipcRenderer.on(channel, (event, ...args) => func(...args))
     },
-    removeListener: (channel: 'update-message', func: (message: string) => void): void => {
-      ipcRenderer.removeListener(channel, (_event, message) => func(message))
+    send: (channel: 'confirm-download' | 'confirm-install' | 'update-data', data?: unknown): void => {
+      if (data) {
+        ipcRenderer.send(channel, data)
+      } else {
+        ipcRenderer.send(channel)
+      }
+    },
+    removeListener: (channel: 'update-message' | 'update-data', func: (...args: unknown[]) => void): void => {
+      ipcRenderer.removeListener(channel, (event, ...args) => func(...args))
     }
   },
   process: {
