@@ -20,7 +20,7 @@ nsis:
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
-  oneClick: false
+  oneClick: true
   allowToChangeInstallationDirectory: true
   installerIcon: build/icon.ico
   uninstallerIcon: build/icon.ico
@@ -30,7 +30,7 @@ nsis:
   installerLanguages: ["en-US"]
   language: "1033"
   displayLanguageSelector: false
-  runAfterFinish: true
+  runAfterFinish: false
   createStartMenuShortcut: true
   installerSidebar: "build/installerSidebar.bmp"
   uninstallerSidebar: "build/installerSidebar.bmp"

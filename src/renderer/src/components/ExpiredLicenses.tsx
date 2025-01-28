@@ -56,6 +56,18 @@ function ExpiredLicenses(): JSX.Element {
     lic_number: ''
   })
 
+  // Add debounced search state
+  const [debouncedSearch, setDebouncedSearch] = useState(searchQuery)
+
+  // Update debounced value after delay
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery)
+    }, 300)
+
+    return (): void => clearTimeout(timer)
+  }, [searchQuery])
+
   const fetchExpiredLicenses = useCallback(async (): Promise<void> => {
     try {
       setLoading(true)
@@ -85,8 +97,9 @@ function ExpiredLicenses(): JSX.Element {
     fetchExpiredLicenses()
   }, [fetchExpiredLicenses])
 
+  // Use debounced value for filtering
   const paginatedLicenses = useMemo(() => {
-    const searchTerm = searchQuery.toLowerCase()
+    const searchTerm = debouncedSearch.toLowerCase()
     const filtered = expiredLicenses.filter((license) => (
       (license.client.first_name?.toLowerCase() || '').includes(searchTerm) ||
       (license.client.last_name?.toLowerCase() || '').includes(searchTerm) ||
@@ -103,7 +116,34 @@ function ExpiredLicenses(): JSX.Element {
       totalPages: Math.ceil(filtered.length / itemsPerPage),
       totalLicenses: filtered.length
     }
-  }, [expiredLicenses, searchQuery, currentPage, itemsPerPage])
+  }, [expiredLicenses, debouncedSearch, currentPage, itemsPerPage])
+
+  // Memoize search input to prevent unnecessary re-renders
+  const SearchInput = useMemo(() => (
+    <div className="relative">
+      <input
+        type="text"
+        placeholder="Search licences..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-full px-4 py-3 rounded-lg bg-stone-700/50 border border-stone-600/50 text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-transparent transition-all"
+      />
+      <svg
+        className="absolute right-3 top-2.5 h-5 w-5 text-gray-400"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+        />
+      </svg>
+    </div>
+  ), [searchQuery])
 
   const PaginationControls = (): JSX.Element => (
     <div className="mt-6 flex items-center justify-between border-t border-stone-600/30 pt-4">
@@ -359,29 +399,7 @@ function ExpiredLicenses(): JSX.Element {
               {isRefreshing ? 'Refreshing...' : 'Refresh'}
             </button>
           </div>
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search licences..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-3 rounded-lg bg-stone-700/50 border border-stone-600/50 text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-transparent transition-all"
-            />
-            <svg
-              className="absolute right-3 top-2.5 h-5 w-5 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
+          {SearchInput}
         </div>
 
         {loading ? (

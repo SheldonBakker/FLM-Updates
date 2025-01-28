@@ -21,6 +21,7 @@ export interface License {
   issue_date: string
   stock_code: string
   lic_number?: string
+  client?: Client
 }
 
 export interface Client {

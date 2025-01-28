@@ -22,7 +22,6 @@ function Dashboard(): JSX.Element {
   const [clients, setClients] = useState<Client[]>([])
   const [loading, setLoading] = useState(true)
   const [clientSearchQuery, setClientSearchQuery] = useState('')
-  const [licenseSearchQuery, setLicenseSearchQuery] = useState('')
   const [page, setPage] = useState(1)
   const [perPage] = useState(5)
   const [formState, setFormState] = useState<FormState>({
@@ -36,41 +35,49 @@ function Dashboard(): JSX.Element {
   const debouncedFetch = useCallback(
     debounce(async (clientTerm: string) => {
       try {
+        setLoading(true); // Start loading after 400ms
         await initializeSupabase();
         let query = getSupabase()
           .from('clients')
           .select('*, gun_licences(*)', { count: 'exact' })
           .order('last_name', { ascending: true });
 
+        const conditions: string[] = [];
+        
         if (clientTerm) {
           const terms = clientTerm.trim().split(' ');
           if (terms.length > 1) {
-            query = query.ilike('first_name', `${terms[0]}%`)
-              .ilike('last_name', `${terms[1]}%`);
+            conditions.push(`first_name.ilike.${terms[0]}%`);
+            conditions.push(`last_name.ilike.${terms[1]}%`);
           } else {
-            query = query.or(
+            conditions.push(
               `first_name.ilike.${clientTerm}%,last_name.ilike.${clientTerm}%,email.ilike.%${clientTerm}%,id_number.ilike.%${clientTerm}%`
             );
           }
         }
 
+        if (conditions.length > 0) {
+          query = query.or(conditions.join(','));
+        }
+
         const { data, error } = await query;
         if (error) throw error;
+        
         setClients(data || []);
-        setPage(1);
       } catch (error) {
         console.error('Error fetching clients:', error);
       } finally {
         setLoading(false);
       }
-    }, 300),
+    }, 400), // Increased debounce to 400ms
     []
   )
 
   useEffect(() => {
-    debouncedFetch(clientSearchQuery)
-    return (): void => debouncedFetch.cancel()
-  }, [clientSearchQuery, debouncedFetch])
+    setClients([]); // Clear results immediately on search
+    debouncedFetch(clientSearchQuery);
+    return (): void => debouncedFetch.cancel();
+  }, [clientSearchQuery, debouncedFetch]);
 
   const paginatedClients = useMemo(() => {
     const lastIndex = page * perPage
@@ -111,8 +118,22 @@ function Dashboard(): JSX.Element {
     <div className="min-h-screen bg-gradient-to-b from-stone-900 to-stone-800 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header Section */}
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between gap-4">
           <h1 className="text-3xl font-bold text-white">Client Management</h1>
+          
+          <div className="relative flex-1 max-w-2xl">
+            <input
+              type="text"
+              placeholder="Search clients by name, email, ID number..."
+              value={clientSearchQuery}
+              onChange={(e) => setClientSearchQuery(e.target.value)}
+              className="w-full px-4 py-3 rounded-lg bg-stone-700/50 border border-stone-600/50 
+                text-white placeholder-stone-400 focus:outline-none focus:ring-2 
+                focus:ring-orange-500/50 focus:border-transparent transition-all"
+            />
+            <DashboardIcons.Search className="absolute right-3 top-3.5 h-5 w-5 text-stone-400" />
+          </div>
+
           <div className="flex gap-3">
             <button 
               onClick={() => setFormState({ ...formState, type: 'client', isOpen: true })}
@@ -137,41 +158,12 @@ function Dashboard(): JSX.Element {
           </div>
         </div>
 
-        {/* Search Bars */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search clients by name, email, ID number..."
-              value={clientSearchQuery}
-              onChange={(e) => setClientSearchQuery(e.target.value)}
-              className="w-full px-4 py-3 rounded-lg bg-stone-700/50 border border-stone-600/50 
-                text-white placeholder-stone-400 focus:outline-none focus:ring-2 
-                focus:ring-orange-500/50 focus:border-transparent transition-all"
-            />
-            <DashboardIcons.Search className="absolute right-3 top-3.5 h-5 w-5 text-stone-400" />
-          </div>
-
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search by license serial number..."
-              value={licenseSearchQuery}
-              onChange={(e) => setLicenseSearchQuery(e.target.value)}
-              className="w-full px-4 py-3 rounded-lg bg-stone-700/50 border border-stone-600/50 
-                text-white placeholder-stone-400 focus:outline-none focus:ring-2 
-                focus:ring-orange-500/50 focus:border-transparent transition-all"
-            />
-            <DashboardIcons.Search className="absolute right-3 top-3.5 h-5 w-5 text-stone-400" />
-          </div>
-        </div>
-
         {/* Client Cards */}
         {loading ? (
           <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500" />
           </div>
-        ) : clientSearchQuery || licenseSearchQuery ? (
+        ) : clientSearchQuery ? (
           <div className="space-y-4">
             {paginatedClients.clients.map((client) => (
               <Suspense 
@@ -208,7 +200,7 @@ function Dashboard(): JSX.Element {
             {paginatedClients.clients.length === 0 && (
               <div className="flex flex-col items-center justify-center h-64 text-stone-400">
                 <DashboardIcons.Search className="w-12 h-12 mb-4" />
-                <p className="text-lg">No results found for &quot;{clientSearchQuery} {licenseSearchQuery}&quot;</p>
+                <p className="text-lg">No results found for &quot;{clientSearchQuery}&quot;</p>
               </div>
             )}
 

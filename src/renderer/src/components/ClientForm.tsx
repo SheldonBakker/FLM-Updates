@@ -132,6 +132,15 @@ export default function ClientForm({ client, onClose, onSuccess }: ClientFormPro
     })
   }
 
+  const handleInputChange = (field: keyof typeof formData) => (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: e.target.value
+    }))
+  }
+
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {}
 
@@ -284,7 +293,7 @@ export default function ClientForm({ client, onClose, onSuccess }: ClientFormPro
               <input
                 type="text"
                 value={formData.first_name}
-                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                onChange={handleInputChange('first_name')}
                 className={`w-full px-4 py-3 rounded-lg bg-stone-700/50 border ${
                   errors.first_name ? 'border-red-500' : 'border-stone-600/50'
                 } text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-transparent transition-all`}
@@ -301,7 +310,7 @@ export default function ClientForm({ client, onClose, onSuccess }: ClientFormPro
               <input
                 type="text"
                 value={formData.last_name}
-                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                onChange={handleInputChange('last_name')}
                 className={`w-full px-4 py-3 rounded-lg bg-stone-700/50 border ${
                   errors.last_name ? 'border-red-500' : 'border-stone-600/50'
                 } text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-transparent transition-all`}
@@ -318,7 +327,7 @@ export default function ClientForm({ client, onClose, onSuccess }: ClientFormPro
               <input
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={handleInputChange('email')}
                 className={`w-full px-4 py-3 rounded-lg bg-stone-700/50 border ${
                   errors.email ? 'border-red-500' : 'border-stone-600/50'
                 } text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-transparent transition-all`}
@@ -338,7 +347,7 @@ export default function ClientForm({ client, onClose, onSuccess }: ClientFormPro
               <input
                 type="tel"
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                onChange={handleInputChange('phone')}
                 className={`w-full px-4 py-3 rounded-lg bg-stone-700/50 border ${
                   errors.phone ? 'border-red-500' : 'border-stone-600/50'
                 } text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-transparent transition-all`}
@@ -356,7 +365,7 @@ export default function ClientForm({ client, onClose, onSuccess }: ClientFormPro
                 type="text"
                 ref={addressInputRef}
                 value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                onChange={handleInputChange('address')}
                 className="w-full px-4 py-3 rounded-lg bg-stone-700/50 border border-stone-600/50 text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-transparent transition-all"
                 placeholder="Start typing to search..."
                 autoComplete="off"
@@ -372,7 +381,7 @@ export default function ClientForm({ client, onClose, onSuccess }: ClientFormPro
               <input
                 type="text"
                 value={formData.city}
-                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                onChange={handleInputChange('city')}
                 className={`w-full px-4 py-3 rounded-lg bg-stone-700/50 border ${
                   errors.city ? 'border-red-500' : 'border-stone-600/50'
                 } text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-transparent transition-all`}
@@ -388,7 +397,7 @@ export default function ClientForm({ client, onClose, onSuccess }: ClientFormPro
               <input
                 type="text"
                 value={formData.state}
-                onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                onChange={handleInputChange('state')}
                 className={`w-full px-4 py-3 rounded-lg bg-stone-700/50 border ${
                   errors.state ? 'border-red-500' : 'border-stone-600/50'
                 } text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-transparent transition-all`}
@@ -404,7 +413,7 @@ export default function ClientForm({ client, onClose, onSuccess }: ClientFormPro
               <input
                 type="text"
                 value={formData.postal_code}
-                onChange={(e) => setFormData({ ...formData, postal_code: e.target.value })}
+                onChange={handleInputChange('postal_code')}
                 className={`w-full px-4 py-3 rounded-lg bg-stone-700/50 border ${
                   errors.postal_code ? 'border-red-500' : 'border-stone-600/50'
                 } text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-transparent transition-all`}
@@ -422,7 +431,7 @@ export default function ClientForm({ client, onClose, onSuccess }: ClientFormPro
             <input
               type="text"
               value={formData.id_number}
-              onChange={(e) => setFormData({ ...formData, id_number: e.target.value })}
+              onChange={handleInputChange('id_number')}
               className={`w-full px-4 py-3 rounded-lg bg-stone-700/50 border ${
                 errors.id_number ? 'border-red-500' : 'border-stone-600/50'
               } text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-transparent transition-all`}

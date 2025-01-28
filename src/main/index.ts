@@ -5,6 +5,7 @@ import { electronApp, is } from '@electron-toolkit/utils'
 import { config } from 'dotenv'
 import path from 'path'
 import { UpdateHandler } from './update-handler'
+import { autoUpdater } from 'electron-updater'
 
 // Load environment variables from .env file
 config({ path: path.join(__dirname, '../../.env') })
@@ -34,18 +35,19 @@ function createWindow(): void {
       contextIsolation: true,
       nodeIntegration: false,
       preload,
-      devTools: true
+      devTools: false
     }
   })
 
-    // Disable the alt menu
-    // mainWindow.setMenuBarVisibility(false)
-    // mainWindow.removeMenu()
+     // Disable the alt menu
+    mainWindow.setMenuBarVisibility(false)
+    mainWindow.removeMenu()
 
 
   // Show window when ready
   mainWindow.once('ready-to-show', () => {
     mainWindow?.show()
+    updateHandler = new UpdateHandler(mainWindow)
   })
 
   // Load the index.html
@@ -55,12 +57,42 @@ function createWindow(): void {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 
-  // Initialize update handler after window creation
-  updateHandler = new UpdateHandler(mainWindow)
-  
-  // Check for updates immediately
-  updateHandler.checkForUpdates()
+  // Add this to the createWindow function
+  mainWindow.on('close', () => {
+    if (updateHandler) {
+      updateHandler.cancelUpdate()
+    }
+  })
 }
+
+// Disable auto updates
+autoUpdater.autoDownload = false
+autoUpdater.autoInstallOnAppQuit = false
+
+// Handle manual update checks
+ipcMain.on('check-for-updates', () => {
+  if (updateHandler) {
+    updateHandler.checkForUpdates()
+  } else {
+    console.error('UpdateHandler not initialized')
+  }
+})
+
+autoUpdater.on('update-available', (info) => {
+  mainWindow?.webContents.send('update-available', info)
+})
+
+autoUpdater.on('update-not-available', () => {
+  mainWindow?.webContents.send('update-not-available')
+})
+
+autoUpdater.on('update-downloaded', (info) => {
+  mainWindow?.webContents.send('update-downloaded', info)
+})
+
+autoUpdater.on('error', (err) => {
+  mainWindow?.webContents.send('update-error', err.message)
+})
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -78,11 +110,15 @@ app.whenReady().then(() => {
 
   // Add these IPC listeners
   ipcMain.on('confirm-download', () => {
-    updateHandler.startDownload()
+    if (updateHandler) {
+      updateHandler.startDownload()
+    }
   })
 
   ipcMain.on('confirm-install', () => {
-    updateHandler.installUpdate()
+    if (updateHandler) {
+      updateHandler.installUpdate()
+    }
   })
 })
 

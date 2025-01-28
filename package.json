@@ -1,6 +1,6 @@
 {
   "name": "gunlicence",
-  "version": "0.8.0",
+  "version": "0.0.1",
   "description": "Firearm Licence Management System",
   "main": "./dist/main/index.js",
   "author": "Sheldon Bakker",
@@ -22,7 +22,7 @@
     "build": "npm run typecheck && electron-vite build",
     "postinstall": "electron-builder install-app-deps",
     "build:unpack": "npm run build && electron-builder --dir",
-    "build:win": "npm run clean && electron-vite build && electron-builder --win",
+    "build:win": "npm run clean && electron-vite build && electron-builder --win --publish always",
     "build:mac": "electron-vite build && electron-builder --mac",
     "build:linux": "electron-vite build && electron-builder --linux",
     "dev:win": "npm run clean && electron-vite dev",

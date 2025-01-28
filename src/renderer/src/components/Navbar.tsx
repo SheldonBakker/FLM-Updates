@@ -2,6 +2,7 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { getSupabase } from '../lib/supabase'
 import electronLogo from '../assets/logo.png'
+import UpdateButton from './UpdateButton'
 
 function Navbar(): JSX.Element {
   const navigate = useNavigate()
@@ -32,7 +33,11 @@ function Navbar(): JSX.Element {
               />
               <div className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">
                 Gunlicence
-                <span className="text-sm font-normal text-stone-400 ml-2">v0.10.0</span>
+                <span className="text-sm font-normal text-stone-400 ml-2">v0.0.1</span>
+                <UpdateButton 
+                  className="ml-2 !p-1 !text-xs bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-md shadow-lg shadow-orange-500/10 hover:shadow-orange-500/20" 
+                  disabledClassName="opacity-50 cursor-not-allowed"
+                />
               </div>
             </div>
 
@@ -46,10 +51,25 @@ function Navbar(): JSX.Element {
                     : 'text-stone-300 hover:text-white hover:bg-stone-800/40'
                 }`}
               >
-                Dashboard
+                Clients
                 <span
                   className={`absolute inset-x-0 -bottom-[1px] h-[2px] bg-gradient-to-r from-orange-500 to-orange-600 transform transition-transform duration-200 ${
-                    location.pathname === '/dashboard' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                    location.pathname === '/clients' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                  }`}
+                />
+              </button>
+              <button
+                onClick={() => navigate('/licenses')}
+                className={`relative px-4 py-2 rounded-md transition-all duration-200 group ${
+                  location.pathname === '/licenses'
+                    ? 'text-white bg-stone-800/60'
+                    : 'text-stone-300 hover:text-white hover:bg-stone-800/40'
+                }`}
+              >
+                Licenses
+                <span
+                  className={`absolute inset-x-0 -bottom-[1px] h-[2px] bg-gradient-to-r from-orange-500 to-orange-600 transform transition-transform duration-200 ${
+                    location.pathname === '/licenses' ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
                   }`}
                 />
               </button>

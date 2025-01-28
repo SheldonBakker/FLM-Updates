@@ -5,9 +5,15 @@ declare global {
   interface Window {
     electron: {
       ipcRenderer: {
-        on: (channel: 'update-message' | 'update-data', func: (...args: unknown[]) => void) => void
-        send: (channel: 'confirm-download' | 'confirm-install' | 'update-data', data?: unknown) => void
-        removeListener: (channel: 'update-message' | 'update-data', func: (...args: unknown[]) => void) => void
+        on: (
+          channel: 'update-message' | 'update-data' | 'update-available' | 'update-downloaded' | 'update-not-available' | 'download-progress' | 'update-error',
+          func: (...args: unknown[]) => void
+        ) => void
+        send: (channel: 'confirm-download' | 'confirm-install' | 'update-data' | 'check-for-updates', data?: unknown) => void
+        removeListener: (
+          channel: 'update-message' | 'update-data' | 'update-available' | 'update-downloaded' | 'update-not-available' | 'download-progress' | 'update-error',
+          func: (...args: unknown[]) => void
+        ) => void
       }
       process: {
         versions: NodeJS.ProcessVersions
