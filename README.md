@@ -1,6 +1,8 @@
 # Firearm Licence Management System (FLMS)
 
-A modern desktop application built with Electron, React, and TypeScript for managing firearm licenses. Designed with security and efficiency in mind, FLMS provides a robust solution for license tracking and client management.
+<img src="https://remlic.co.za/other/icon.svg" width="80" height="80" class="mx-auto" />
+
+A modern desktop application built with Electron, React, and TypeScript for managing firearm licenses. Designed with security and efficiency in mind, fLMS provides a robust solution for license tracking and client management.
 
 ## Features
 
@@ -13,7 +15,24 @@ A modern desktop application built with Electron, React, and TypeScript for mana
 ## Technology Stack
 
 - **Frontend**: React with TailwindCSS
-- **Backend**: Electron with TypeScript, Node.js, Python
-- **Database**: Postgress SQL
+- **Backend**: Electron with TypeScript, Python, Node.js
+- **Database**: Postgres SQL
 - **Build Tools**: Electron Vite
 - **Update System**: Electron Updater
+
+## Update System
+
+The application includes a controlled update system that:
+
+- Allows manual update checks
+- Provides update notifications
+- Gives users control over download and installation
+- Prevents automatic updates during critical operations
+
+## License
+
+This project is protected under a custom license that restricts modification and distribution rights.
+
+## Contact
+
+For more information, please contact us at [acum3n@protonmail.com](mailto:acum3n@protonmail.com).
