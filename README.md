@@ -8,12 +8,12 @@ A modern desktop application built with Electron, React, and TypeScript for mana
 - **License Tracking**: Track firearm licenses with expiration notifications
 - **Auto-Updates**: Built-in update system with manual control
 - **Cross-Platform**: Available for Windows, macOS, and Linux
-- **Database Integration**: Secure connection to Supabase backend
+- **Database Integration**: Secure connection to Postgres SQL
 
 ## Technology Stack
 
 - **Frontend**: React with TailwindCSS
-- **Backend**: Electron with TypeScript, Node.js, Python, 
+- **Backend**: Electron with TypeScript, Node.js, Python
 - **Database**: Postgress SQL
 - **Build Tools**: Electron Vite
 - **Update System**: Electron Updater
