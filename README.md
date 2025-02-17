@@ -1,6 +1,6 @@
 # Firearm Licence Management System (FLMS)
 
-<img src="https://remlic.co.za/other/icon.svg" width="80" height="80" class="mx-auto" />
+<img src="https://remlic.co.za/assets/Remlic-CI1d_3kv.png" width="80" height="80" class="mx-auto" />
 
 A modern desktop application built with Electron, React, and TypeScript for managing firearm licenses. Designed with security and efficiency in mind, fLMS provides a robust solution for license tracking and client management.
 
