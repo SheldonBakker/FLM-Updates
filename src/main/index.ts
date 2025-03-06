@@ -8,15 +8,22 @@ import { UpdateHandler } from './update-handler'
 import { autoUpdater } from 'electron-updater'
 import { dialog } from 'electron'
 
-// Load environment variables from .env file
-config({ path: path.join(__dirname, '../../.env') })
+// Load environment variables
+if (!app.isPackaged) {
+  config() // Load from .env in development
+} else {
+  config({ path: path.join(process.resourcesPath, '.env') }) // Load from resources in production
+}
 
 const supabaseUrl = process.env.SUPABASE_URL
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Database credentials are missing in environment variables')
-  throw new Error('Database credentials are required')
+  dialog.showErrorBox(
+    'Configuration Error', 
+    'Missing database credentials. Please reinstall the application.'
+  )
+  app.quit()
 }
 
 let mainWindow: BrowserWindow | null = null
@@ -35,14 +42,15 @@ function createWindow(): void {
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
+      sandbox: false, // Disable sandbox for preload script
       preload,
-      devTools: true
+      devTools: false
     }
   })
 
-    // Disable the alt menu
-    //mainWindow.setMenuBarVisibility(false)
-    //mainWindow.removeMenu()
+    //Disable the alt menu
+      mainWindow.setMenuBarVisibility(false)
+      mainWindow.removeMenu()
 
 
   // Show window when ready
@@ -138,4 +146,14 @@ ipcMain.handle('show-save-dialog', async (_, options) => {
 
 ipcMain.handle('show-open-dialog', async (_, options) => {
   return dialog.showOpenDialog(options);
+});
+
+ipcMain.handle('get-credentials', () => {
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
+    throw new Error('Credentials not found in environment');
+  }
+  return {
+    supabaseUrl: process.env.SUPABASE_URL,
+    supabaseAnonKey: process.env.SUPABASE_ANON_KEY
+  };
 });

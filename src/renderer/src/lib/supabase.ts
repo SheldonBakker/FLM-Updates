@@ -8,20 +8,28 @@ const getSupabaseCredentials = async (): Promise<{
   supabaseAnonKey: string;
 }> => {
   try {
-    // Try to get credentials from the main process first
-    const credentials = await window.getCredentials()
-    return {
-      supabaseUrl: credentials.supabaseUrl,
-      supabaseAnonKey: credentials.supabaseAnonKey
+    // Try electron API first
+    if (window.electronAPI) {
+      const credentials = await window.electronAPI.getCredentials();
+      if (credentials) {
+        return credentials as { supabaseUrl: string; supabaseAnonKey: string };
+      }
     }
-  } catch (error) {
+
     // Fallback to environment variables
-    return {
-      supabaseUrl: import.meta.env.VITE_SUPABASE_URL,
-      supabaseAnonKey: import.meta.env.VITE_SUPABASE_ANON_KEY
+    if (import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY) {
+      return {
+        supabaseUrl: import.meta.env.VITE_SUPABASE_URL,
+        supabaseAnonKey: import.meta.env.VITE_SUPABASE_ANON_KEY
+      };
     }
+
+    throw new Error('No credentials available');
+  } catch (error) {
+    console.error('Failed to get credentials:', error);
+    throw new Error('Database authentication failed');
   }
-}
+};
 
 export const initializeSupabase = async (): Promise<SupabaseClient> => {
   if (supabaseInstance) return supabaseInstance

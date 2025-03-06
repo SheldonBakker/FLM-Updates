@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { resolve } from 'path'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
-import react from '@vitejs/plugin-react'
+import react from '@vitejs/plugin-react-swc'
 import { loadEnv } from 'vite'
 
 export default defineConfig(({ mode }) => {
@@ -12,10 +12,11 @@ export default defineConfig(({ mode }) => {
       plugins: [externalizeDepsPlugin()],
       build: {
         outDir: 'dist/main',
-        rollupOptions: {
+        rollupOptions: {  
           input: {
             index: resolve(__dirname, 'src/main/index.ts')
-          }
+          },
+          external: ['dotenv']
         }
       },
       resolve: {
@@ -31,7 +32,10 @@ export default defineConfig(({ mode }) => {
     preload: {
       plugins: [externalizeDepsPlugin()],
       build: {
-        outDir: 'dist/preload'
+        outDir: 'dist/preload',
+        rollupOptions: {
+          external: ['path', 'fs']
+        }
       }
     },
     renderer: {

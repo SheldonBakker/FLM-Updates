@@ -1,5 +1,8 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { contextBridge, ipcRenderer } from 'electron'
+import * as path from 'path'
+import * as fs from 'fs'
 
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
@@ -25,14 +28,15 @@ contextBridge.exposeInMainWorld('electron', {
 })
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  path: require('path'),
-  fs: require('fs'),
-  showOpenDialog: (options: Electron.OpenDialogOptions) => ipcRenderer.invoke('show-open-dialog', options),
   onLoadingStateChange: (callback: (loading: boolean) => void): (() => void) => {
     ipcRenderer.on('loading-state', (_event, isLoading) => callback(isLoading))
     return () => {
       ipcRenderer.removeAllListeners('loading-state')
     }
   },
-  showSaveDialog: (options: Electron.SaveDialogOptions) => ipcRenderer.invoke('show-save-dialog', options)
+  showOpenDialog: (options: Electron.OpenDialogOptions) => ipcRenderer.invoke('show-open-dialog', options),
+  showSaveDialog: (options: Electron.SaveDialogOptions) => ipcRenderer.invoke('show-save-dialog', options),
+  path: require('path'),
+  fs: require('fs'),
+  getCredentials: () => ipcRenderer.invoke('get-credentials')
 })

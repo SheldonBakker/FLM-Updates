@@ -1,4 +1,6 @@
 /* eslint-disable prettier/prettier */
+import { OpenDialogOptions, OpenDialogReturnValue, SaveDialogOptions, SaveDialogReturnValue } from 'electron';
+
 declare global {
   interface Window {
     electron: {
@@ -12,7 +14,15 @@ declare global {
       }
     }
     electronAPI: {
+      getCredentials: () => Promise<{
+        supabaseUrl: string;
+        supabaseAnonKey: string;
+      }>;
       onLoadingStateChange: (callback: (loading: boolean) => void) => () => void
+      showOpenDialog: (options: OpenDialogOptions) => Promise<OpenDialogReturnValue>
+      showSaveDialog: (options: SaveDialogOptions) => Promise<SaveDialogReturnValue>
+      path: NodeJS.PlatformPath
+      fs: typeof import('fs')
     }
   }
 }

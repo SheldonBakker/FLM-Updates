@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { useState, useEffect } from 'react'
 
-export function Version(): JSX.Element {
+export function Version(): React.JSX.Element {
   const [version, setVersion] = useState<string>('')
 
   useEffect(() => {

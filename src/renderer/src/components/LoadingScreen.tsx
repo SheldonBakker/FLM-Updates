@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import logo from '../assets/logo.png'
 
-const LoadingScreen = (): JSX.Element => {
+const LoadingScreen = (): React.JSX.Element => {
   const [progress, setProgress] = useState<number>(0)
   const [startTime] = useState<number>(Date.now())
 

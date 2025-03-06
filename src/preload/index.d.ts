@@ -22,9 +22,10 @@ declare global {
       path: typeof import('path')
     }
     api: unknown
-    electronAPI: {
-      showOpenDialog: (options: Electron.OpenDialogOptions) => Promise<Electron.OpenDialogReturnValue>
+    electronAPI?: {
+      getCredentials(): unknown
       onLoadingStateChange: (callback: (loading: boolean) => void) => () => void
+      showOpenDialog: (options: Electron.OpenDialogOptions) => Promise<Electron.OpenDialogReturnValue>
       showSaveDialog: (options: Electron.SaveDialogOptions) => Promise<Electron.SaveDialogReturnValue>
       path: typeof import('path')
       fs: typeof import('fs')

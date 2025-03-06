@@ -6,6 +6,9 @@ files:
   - "dist/**/*"
   - ".env"
   - ".env.production"
+  - "src/preload/**/*"
+  - "!**/*.map"
+  - "!**/*.d.ts"
 asarUnpack:
   - resources/**
 win:

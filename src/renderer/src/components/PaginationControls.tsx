@@ -13,7 +13,7 @@ function PaginationControls({
   pagination, 
   paginatedClients, 
   setPagination 
-}: PaginationControlsProps): JSX.Element {
+}: PaginationControlsProps): React.JSX.Element {
   return (
     <div className="flex justify-between items-center py-4">
       <button

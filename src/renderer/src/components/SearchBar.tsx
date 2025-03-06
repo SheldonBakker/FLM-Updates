@@ -7,7 +7,7 @@ interface SearchBarProps {
   isLoading?: boolean;
 }
 
-function SearchBar({ onSearch, isLoading = false }: SearchBarProps): JSX.Element {
+function SearchBar({ onSearch, isLoading = false }: SearchBarProps): React.JSX.Element {
   const [query, setQuery] = useState<string>('');
 
   useEffect(() => {

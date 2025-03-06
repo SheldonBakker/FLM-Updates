@@ -2,19 +2,19 @@
 /// <reference types="../../preload" />
 import { useState, useEffect } from 'react'
 import { HashRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
-import Login from './components/Login'
-import Navbar from './components/Navbar'
+import Login from './pages/Login'
+import Navbar from './pages/Navbar'
 import { initializeSupabase, getSupabase } from './lib/supabase'
-import Dashboard from './components/Dashboard'
-import ExpiredLicenses from './components/ExpiredLicenses'
+import Dashboard from './pages/Dashboard'
+import ExpiredLicenses from './pages/ExpiredLicenses'
 import LoadingScreen from './components/LoadingScreen'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import LicensesPage from './components/LicensesPage'
-import Checklist from './components/Checklist'
+import LicensesPage from './pages/LicensesPage'
+import DocScript from './pages/DocScript'
 
 
-function App(): JSX.Element {
+function App(): React.JSX.Element {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isAppLoading, setIsAppLoading] = useState(true)
@@ -29,16 +29,16 @@ function App(): JSX.Element {
   }, [])
 
   useEffect(() => {
-    if (!window.electronAPI) {
-      console.error('electronAPI is not available')
+    if (!window.electronAPI && process.env.NODE_ENV !== 'development') {
+      console.warn('electronAPI is not available - running in development mode')
       return
     }
     
-    const cleanup = window.electronAPI.onLoadingStateChange((loading) => {
+    const cleanup = window.electronAPI?.onLoadingStateChange?.((loading) => {
       setIsLoading(loading)
     })
 
-    return (): void => cleanup()
+    return (): void => cleanup?.()
   }, [])
 
   useEffect(() => {
@@ -108,7 +108,7 @@ function App(): JSX.Element {
           <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/" />} />
           <Route path="/expired" element={isAuthenticated ? <ExpiredLicenses /> : <Navigate to="/" />} />
           <Route path="/licenses" element={isAuthenticated ? <LicensesPage /> : <Navigate to="/" />} />
-          <Route path="/checklist" element={isAuthenticated ? <Checklist /> : <Navigate to="/" />} />
+          <Route path="/docscript" element={isAuthenticated ? <DocScript /> : <Navigate to="/" />} />
         </Routes>
       </Router>
       <ToastContainer />

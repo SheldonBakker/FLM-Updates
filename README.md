@@ -18,6 +18,33 @@ A modern desktop application built with Electron, React, and TypeScript for mana
 - **Build Tools**: Electron Vite
 - **Update System**: Electron Updater
 
+## Installation
+
+### Prerequisites
+
+- Node.js v18+
+- npm v9+
+
+### Development Setup
+
+Build for Windows
+npm run build:win
+
+Build for macOS
+npm run build:mac
+
+Build for Linux
+npm run build:linux
+
+## Security Features
+
+- Content Security Policy (CSP) enforced
+- Context Isolation enabled
+- Node Integration disabled
+- Hardened runtime for Windows
+- Strict TypeScript checking
+- Admin-only access control
+
 ## Update System
 
 The application includes a controlled update system that:
@@ -29,8 +56,17 @@ The application includes a controlled update system that:
 
 ## License
 
-This project is protected under a custom license that restricts modification and distribution rights.
+This project is protected under a custom license that restricts modification and distribution rights. See [LICENSE](LICENSE) for details.
 
-## Contact
+## Contributing
 
-For more information, please contact us at [acum3n@protonmail.com](mailto:acum3n@protonmail.com).
+1. Fork the repository
+2. Create a new branch
+3. Submit a pull request
+
+## Support
+
+For support or security-related inquiries, contact:
+
+- Sheldon Bakker
+- [acum3n@protonmail.com](mailto:acum3n@protonmail.com)

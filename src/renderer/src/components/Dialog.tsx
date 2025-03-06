@@ -13,7 +13,7 @@ export function Dialog({
   message,
   onConfirm,
   onCancel
-}: DialogProps): JSX.Element | null {
+}: DialogProps): React.JSX.Element | null {
   if (!isOpen) return null
 
   return (

@@ -25,7 +25,7 @@ export function RenewalForm({
   onRenewalSubmit,
   onClose,
   onFormDataChange
-}: RenewalFormProps): JSX.Element {
+}: RenewalFormProps): React.JSX.Element {
   const [showSectionError, setShowSectionError] = React.useState(false)
   const [dateError, setDateError] = React.useState<string | null>(null)
 
