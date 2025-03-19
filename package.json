@@ -111,7 +111,7 @@
     "cross-env": "^7.0.3",
     "electron-builder": "^24.13.3",
     "electron-vite": "^1.0.10",
-    "esbuild": "^0.25.0",
+    "esbuild": "^0.25.1",
     "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.34.3",
     "postcss": "^8.5.1",
